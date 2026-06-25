@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #d9ff00;
+  --color-primary-hover: #c4e600;
+  --color-app-bg: #050505;
+  --color-panel-bg: #0c0c0e;
+  --color-card-bg: #141417;
+  --color-accent-primary: oklch(0.62 0.25 290);
+  --color-accent-secondary: oklch(0.72 0.2 195);
+  
+  --shadow-premium: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 20px rgba(217, 255, 0, 0.15);
+  --shadow-glow-accent: 0 0 20px rgba(168, 85, 247, 0.2);
+  
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-app-bg text-[#f4f4f6] antialiased select-none overflow-hidden;
+    font-family: var(--font-sans);
+  }
+
+  /* Custom dark scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Glassmorphic classes */
+.glass-panel {
+  background: rgba(12, 12, 14, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-panel-elevated {
+  background: rgba(20, 20, 23, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.interactive {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.interactive:hover {
+  filter: brightness(1.1);
+}
+.interactive:active {
+  transform: scale(0.98);
+}
+
+/* XYFlow custom styling for dark mode */
+.vue-flow__node, .react-flow__node {
+  background: #141417 !important;
+  color: #f4f4f6 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 8px !important;
+  padding: 10px !important;
+  font-family: var(--font-sans);
+  font-size: 12px;
+}
+
+.react-flow__handle {
+  background: #d9ff00 !important;
+  border: 2px solid var(--color-app-bg) !important;
+}
