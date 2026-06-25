@@ -1,6 +1,14 @@
 import React, { useRef, useEffect } from "react";
 import { useTimelineStore } from "../../stores/timeline";
-import { Play, Pause, ZoomIn, ZoomOut, Film, Trash2, Music } from "lucide-react";
+import {
+  Play,
+  Pause,
+  ZoomIn,
+  ZoomOut,
+  Film,
+  Trash2,
+  Music,
+} from "lucide-react";
 
 export const TimelineEditor: React.FC = () => {
   const {
@@ -56,11 +64,18 @@ export const TimelineEditor: React.FC = () => {
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setIsPlaying(!isPlaying)}
+              aria-label={isPlaying ? "Pause" : "Play"}
               className={`h-7 w-7 rounded-lg flex items-center justify-center interactive cursor-pointer ${
-                isPlaying ? "bg-[#d9ff00] text-black" : "bg-zinc-900 text-zinc-300 border border-white/10"
+                isPlaying
+                  ? "bg-[#d9ff00] text-black"
+                  : "bg-zinc-900 text-zinc-300 border border-white/10"
               }`}
             >
-              {isPlaying ? <Pause className="h-4.5 w-4.5 fill-black" /> : <Play className="h-4.5 w-4.5 fill-zinc-300 ml-0.5" />}
+              {isPlaying ? (
+                <Pause className="h-4.5 w-4.5 fill-black" />
+              ) : (
+                <Play className="h-4.5 w-4.5 fill-zinc-300 ml-0.5" />
+              )}
             </button>
             <span className="font-mono text-xs text-zinc-300 w-24 text-center">
               {formatTime(playheadMs)}
@@ -83,13 +98,17 @@ export const TimelineEditor: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setZoomLevel(zoomLevel - 10)}
+            aria-label="Zoom Out"
             className="h-7 w-7 rounded-lg bg-zinc-900 border border-white/10 text-zinc-400 hover:text-white flex items-center justify-center interactive cursor-pointer"
           >
             <ZoomOut className="h-3.5 w-3.5" />
           </button>
-          <span className="text-[10px] text-zinc-500 font-mono w-10 text-center">{zoomLevel}px/s</span>
+          <span className="text-[10px] text-zinc-500 font-mono w-10 text-center">
+            {zoomLevel}px/s
+          </span>
           <button
             onClick={() => setZoomLevel(zoomLevel + 10)}
+            aria-label="Zoom In"
             className="h-7 w-7 rounded-lg bg-zinc-900 border border-white/10 text-zinc-400 hover:text-white flex items-center justify-center interactive cursor-pointer"
           >
             <ZoomIn className="h-3.5 w-3.5" />
@@ -116,7 +135,9 @@ export const TimelineEditor: React.FC = () => {
                   ) : (
                     <Music className="h-3.5 w-3.5 text-cyan-400/70" />
                   )}
-                  <span className="font-medium text-zinc-300 truncate w-24">{track.name}</span>
+                  <span className="font-medium text-zinc-300 truncate w-24">
+                    {track.name}
+                  </span>
                 </div>
                 <div className="flex gap-1.5">
                   <span className="text-[9px] font-mono text-zinc-500 capitalize bg-zinc-900 px-1 py-0.2 rounded border border-white/5">
@@ -136,18 +157,20 @@ export const TimelineEditor: React.FC = () => {
         >
           {/* Ruler (Time stamps) */}
           <div className="h-6 border-b border-white/5 bg-zinc-950/30 flex relative shrink-0">
-            {Array.from({ length: Math.ceil(maxDurationMs / 1000) }).map((_, i) => {
-              const leftPos = (i * 1000 * zoomLevel) / 1000;
-              return (
-                <div
-                  key={i}
-                  className="absolute border-l border-white/5 h-full pl-1 text-[9px] text-zinc-600 font-mono flex items-end pb-0.5"
-                  style={{ left: `${leftPos}px` }}
-                >
-                  {i}s
-                </div>
-              );
-            })}
+            {Array.from({ length: Math.ceil(maxDurationMs / 1000) }).map(
+              (_, i) => {
+                const leftPos = (i * 1000 * zoomLevel) / 1000;
+                return (
+                  <div
+                    key={i}
+                    className="absolute border-l border-white/5 h-full pl-1 text-[9px] text-zinc-600 font-mono flex items-end pb-0.5"
+                    style={{ left: `${leftPos}px` }}
+                  >
+                    {i}s
+                  </div>
+                );
+              },
+            )}
           </div>
 
           {/* Track lanes */}

@@ -24,7 +24,13 @@ export const useAppStore = create<AppState>((set) => ({
   theme: "dark",
   sidebarOpen: true,
   activeProfile: "default",
-  profiles: [{ name: "default", profile_dir: "", first_seen_at: new Date().toISOString() }],
+  profiles: [
+    {
+      name: "default",
+      profile_dir: "",
+      first_seen_at: new Date().toISOString(),
+    },
+  ],
   daemonConnected: false,
   daemonUrl: "http://127.0.0.1:8000",
   activeTab: "canvas",

@@ -3,7 +3,8 @@ import { useAppStore } from "../../stores/app";
 import { Database, Server, User, Cpu, Film } from "lucide-react";
 
 export const StatusBar: React.FC = () => {
-  const { daemonConnected, daemonUrl, activeProfile, dbPath, activeTab } = useAppStore();
+  const { daemonConnected, daemonUrl, activeProfile, dbPath, activeTab } =
+    useAppStore();
 
   return (
     <footer className="h-8 glass-panel border-t border-white/5 flex items-center justify-between px-4 text-[11px] text-zinc-400 select-none shrink-0 z-50">
@@ -15,10 +16,18 @@ export const StatusBar: React.FC = () => {
           <span className="font-mono text-zinc-300">{daemonUrl}</span>
           <div
             className={`h-1.5 w-1.5 rounded-full ${
-              daemonConnected ? "bg-emerald-500 shadow-[0_0_8px_#10b981]" : "bg-red-500 shadow-[0_0_8px_#ef4444]"
+              daemonConnected
+                ? "bg-emerald-500 shadow-[0_0_8px_#10b981]"
+                : "bg-red-500 shadow-[0_0_8px_#ef4444]"
             }`}
           />
-          <span className={daemonConnected ? "text-emerald-400 font-medium" : "text-red-400 font-medium"}>
+          <span
+            className={
+              daemonConnected
+                ? "text-emerald-400 font-medium"
+                : "text-red-400 font-medium"
+            }
+          >
             {daemonConnected ? "Connected" : "Offline"}
           </span>
         </div>
@@ -28,7 +37,10 @@ export const StatusBar: React.FC = () => {
         <div className="flex items-center gap-1.5">
           <Database className="h-3.5 w-3.5 text-zinc-500" />
           <span>Database:</span>
-          <span className="font-mono text-zinc-300 truncate max-w-[200px]" title={dbPath || "gflow.db (default)"}>
+          <span
+            className="font-mono text-zinc-300 truncate max-w-[200px]"
+            title={dbPath || "gflow.db (default)"}
+          >
             {dbPath ? dbPath.split(/[/\\]/).pop() : "gflow.db (default)"}
           </span>
         </div>

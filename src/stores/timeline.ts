@@ -22,8 +22,22 @@ interface TimelineState {
 }
 
 const defaultTracks = (): Track[] => [
-  { id: "track-v1", name: "Video Track 1", kind: "video", muted: false, locked: false, clips: [] },
-  { id: "track-a1", name: "Audio Track 1", kind: "audio", muted: false, locked: false, clips: [] },
+  {
+    id: "track-v1",
+    name: "Video Track 1",
+    kind: "video",
+    muted: false,
+    locked: false,
+    clips: [],
+  },
+  {
+    id: "track-a1",
+    name: "Audio Track 1",
+    kind: "audio",
+    muted: false,
+    locked: false,
+    clips: [],
+  },
 ];
 
 export const useTimelineStore = create<TimelineState>((set) => ({
@@ -83,7 +97,8 @@ export const useTimelineStore = create<TimelineState>((set) => ({
         ...track,
         clips: track.clips.filter((c) => c.id !== clipId),
       })),
-      selectedClipId: state.selectedClipId === clipId ? null : state.selectedClipId,
+      selectedClipId:
+        state.selectedClipId === clipId ? null : state.selectedClipId,
     })),
   moveClip: (clipId, newStartTimeMs) =>
     set((state) => ({
@@ -97,7 +112,14 @@ export const useTimelineStore = create<TimelineState>((set) => ({
     })),
   setPlayheadMs: (playheadMs) => set({ playheadMs: Math.max(0, playheadMs) }),
   setIsPlaying: (isPlaying) => set({ isPlaying }),
-  setZoomLevel: (zoomLevel) => set({ zoomLevel: Math.max(10, Math.min(200, zoomLevel)) }),
+  setZoomLevel: (zoomLevel) =>
+    set({ zoomLevel: Math.max(10, Math.min(200, zoomLevel)) }),
   setSelectedClipId: (selectedClipId) => set({ selectedClipId }),
-  resetTimeline: () => set({ tracks: defaultTracks(), playheadMs: 0, isPlaying: false, selectedClipId: null }),
+  resetTimeline: () =>
+    set({
+      tracks: defaultTracks(),
+      playheadMs: 0,
+      isPlaying: false,
+      selectedClipId: null,
+    }),
 }));

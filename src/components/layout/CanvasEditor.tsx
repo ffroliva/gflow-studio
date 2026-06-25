@@ -12,14 +12,25 @@ import {
   Node,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { Play, RotateCcw, Settings2, Sliders, FileVideo, Image as ImageIcon, Loader2 } from "lucide-react";
+import {
+  Play,
+  RotateCcw,
+  Settings2,
+  Sliders,
+  FileVideo,
+  Image as ImageIcon,
+  Loader2,
+} from "lucide-react";
 import { mcpClientInstance } from "../../services/mcpClient";
 
 const initialNodes: Node[] = [
   {
     id: "node-1",
     type: "input",
-    data: { label: "Prompt: 'A cinematic shot of a red spaceship landing on a desert planet at sunset, photorealistic, 8k, highly detailed'" },
+    data: {
+      label:
+        "Prompt: 'A cinematic shot of a red spaceship landing on a desert planet at sunset, photorealistic, 8k, highly detailed'",
+    },
     position: { x: 50, y: 100 },
     style: { width: 280, borderColor: "#a855f7" },
   },
@@ -62,14 +73,16 @@ export const CanvasEditor: React.FC = () => {
 
   const onConnect = useCallback(
     (params: FlowConnection) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
+    [setEdges],
   );
 
   const handleQueueGeneration = async () => {
     // Extract prompt from node-1
     const promptNode = nodes.find((n) => n.id === "node-1");
     const label = promptNode?.data.label as string;
-    const prompt = label ? label.replace("Prompt: '", "").replace(/'$/, "") : "A beautiful sunset";
+    const prompt = label
+      ? label.replace("Prompt: '", "").replace(/'$/, "")
+      : "A beautiful sunset";
 
     setGenerating(true);
     setStatusText(`Compiling parameters...`);
@@ -77,23 +90,33 @@ export const CanvasEditor: React.FC = () => {
     try {
       if (outputKind === "image") {
         setStatusText("Dispatching gflow_generate_image tool via SSE...");
-        const result = await mcpClientInstance.callTool("gflow_generate_image", {
-          prompt,
-          model: "nano2",
-          aspect: aspectRatio,
-          count: 1,
-        });
+        const result = await mcpClientInstance.callTool(
+          "gflow_generate_image",
+          {
+            prompt,
+            model: "nano2",
+            aspect: aspectRatio,
+            count: 1,
+          },
+        );
         console.log("Image generation response:", result);
-        setStatusText(`Image generated successfully: ${JSON.stringify(result)}`);
+        setStatusText(
+          `Image generated successfully: ${JSON.stringify(result)}`,
+        );
       } else {
         setStatusText("Dispatching gflow_generate_video tool via SSE...");
-        const result = await mcpClientInstance.callTool("gflow_generate_video", {
-          prompt,
-          mode: "t2v",
-          aspect: aspectRatio,
-        });
+        const result = await mcpClientInstance.callTool(
+          "gflow_generate_video",
+          {
+            prompt,
+            mode: "t2v",
+            aspect: aspectRatio,
+          },
+        );
         console.log("Video generation response:", result);
-        setStatusText(`Video generated successfully: ${JSON.stringify(result)}`);
+        setStatusText(
+          `Video generated successfully: ${JSON.stringify(result)}`,
+        );
       }
     } catch (e: any) {
       console.error(e);
@@ -172,12 +195,16 @@ export const CanvasEditor: React.FC = () => {
         <div className="absolute top-4 right-4 z-10 glass-panel-elevated p-4 rounded-xl w-64 shadow-premium">
           <div className="flex items-center gap-2 mb-3 border-b border-white/5 pb-2">
             <Settings2 className="h-4 w-4 text-[#d9ff00]" />
-            <h3 className="text-xs font-bold text-zinc-300">Quick Parameters</h3>
+            <h3 className="text-xs font-bold text-zinc-300">
+              Quick Parameters
+            </h3>
           </div>
 
           <div className="space-y-3">
             <div>
-              <label className="block text-[10px] text-zinc-500 mb-1">OUTPUT KINDS</label>
+              <label className="block text-[10px] text-zinc-500 mb-1">
+                OUTPUT KINDS
+              </label>
               <div className="grid grid-cols-2 gap-1.5">
                 <button
                   onClick={() => setOutputKind("image")}
@@ -205,7 +232,9 @@ export const CanvasEditor: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] text-zinc-500 mb-1">ASPECT RATIO</label>
+              <label className="block text-[10px] text-zinc-500 mb-1">
+                ASPECT RATIO
+              </label>
               <select
                 value={aspectRatio}
                 onChange={(e) => setAspectRatio(e.target.value)}
@@ -219,7 +248,9 @@ export const CanvasEditor: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] text-zinc-500 mb-1">STEPS / QUALITY</label>
+              <label className="block text-[10px] text-zinc-500 mb-1">
+                STEPS / QUALITY
+              </label>
               <input
                 type="range"
                 min="10"

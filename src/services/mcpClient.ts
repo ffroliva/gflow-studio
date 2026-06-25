@@ -1,4 +1,3 @@
-
 interface JsonRpcRequest {
   jsonrpc: "2.0";
   method: string;
@@ -21,7 +20,10 @@ class McpClient {
   private eventSource: EventSource | null = null;
   private postUrl: string | null = null;
   private nextId = 1;
-  private pendingRequests = new Map<number, { resolve: (val: any) => void; reject: (err: any) => void }>();
+  private pendingRequests = new Map<
+    number,
+    { resolve: (val: any) => void; reject: (err: any) => void }
+  >();
   private onStatusChange: ((connected: boolean) => void) | null = null;
 
   constructor() {}
@@ -40,7 +42,9 @@ class McpClient {
         const relativePath = event.data;
         // Construct full post URL
         const base = url.endsWith("/") ? url.slice(0, -1) : url;
-        this.postUrl = relativePath.startsWith("http") ? relativePath : `${base}${relativePath}`;
+        this.postUrl = relativePath.startsWith("http")
+          ? relativePath
+          : `${base}${relativePath}`;
         this.onStatusChange?.(true);
       });
 

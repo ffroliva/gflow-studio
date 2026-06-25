@@ -41,7 +41,7 @@ export class ErrorBoundary extends Component<Props, State> {
           <div className="relative w-full max-w-md overflow-hidden rounded-xl border border-red-500/30 bg-card-bg p-6 shadow-premium">
             {/* Ambient background glow */}
             <div className="absolute -left-16 -top-16 h-32 w-32 rounded-full bg-red-500/10 blur-3xl" />
-            
+
             <div className="flex flex-col items-center text-center">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-500 mb-4">
                 <AlertTriangle className="h-6 w-6" />
@@ -50,9 +50,10 @@ export class ErrorBoundary extends Component<Props, State> {
                 Studio Component Crashed
               </h2>
               <p className="mt-2 text-sm text-[#a1a1aa] line-clamp-3">
-                {this.state.error?.message || "An unexpected rendering error occurred inside Gflow Studio."}
+                {this.state.error?.message ||
+                  "An unexpected rendering error occurred inside Gflow Studio."}
               </p>
-              
+
               <button
                 onClick={this.handleReset}
                 className="mt-6 flex items-center justify-center gap-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 px-4 py-2 text-sm font-medium transition-all active:scale-95 cursor-pointer"

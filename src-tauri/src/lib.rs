@@ -1,6 +1,7 @@
 use rusqlite::Connection;
 use serde::Serialize;
 use std::path::Path;
+use tauri::Manager;
 
 #[derive(Serialize)]
 struct AssetDto {
@@ -169,6 +170,22 @@ async fn get_daemon_status(base_url: String) -> Result<String, String> {
     }
 }
 
+#[tauri::command]
+fn resolve_default_db_path(app: tauri::AppHandle) -> Result<String, String> {
+    let mut path = app.path().local_data_dir().map_err(|e| e.to_string())?;
+    #[cfg(target_os = "windows")]
+    {
+        path.push("ffroliva");
+        path.push("gflow-cli");
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        path.push("gflow-cli");
+    }
+    path.push("gflow.db");
+    Ok(path.to_string_lossy().into_owned())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -176,7 +193,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             fetch_assets,
             fetch_characters,
-            get_daemon_status
+            get_daemon_status,
+            resolve_default_db_path
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
