@@ -21,7 +21,7 @@
     "@tauri-apps/plugin-opener": "^2.0.0",
     "@xyflow/react": "^12.3.6",
     "clsx": "^2.1.1",
-    "framer-motion": "^11.15.0",
+    "framer-motion": "^12.43.0",
     "lucide-react": "^0.468.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
