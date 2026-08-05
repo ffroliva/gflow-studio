@@ -1,0 +1,115 @@
+name: CI
+
+# ── Why this exists ──────────────────────────────────────────────────────────
+# This repo had NO CI. Every dependency PR — including security fixes — was
+# merged on trust, and `npm audit` was only ever run by whoever happened to
+# think of it. During the 2026-08 remediation this repo needed 13 high
+# advisories cleared, and the only thing standing between a broken bump and
+# `main` was someone running `npm run build` locally.
+#
+# Every step below is one that actually caught something during that pass:
+# `npm ci` catches peer-dependency conflicts a lockfile edit can introduce
+# (vite 6 failed to install until two peers moved with it), and `npm audit`
+# catches the advisory drift that has no other alarm.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # A newer push supersedes an in-flight run on the same ref.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      # `npm ci` (not `install`) is deliberate: it installs strictly from the
+      # lockfile and FAILS on a package.json/lockfile mismatch or an unmet
+      # peer, which is exactly the class of breakage a dependency bump causes.
+      - name: Install (strict, from lockfile)
+        run: npm ci
+
+      # --if-present keeps this workflow portable across repos whose script
+      # sets differ; a repo without `typecheck` skips it instead of failing.
+      - name: Typecheck
+        run: npm run typecheck --if-present
+
+      - name: Test
+        run: npm test --if-present
+
+      - name: Build
+        run: npm run build
+
+  lint:
+    name: Lint (advisory)
+    runs-on: ubuntu-latest
+    # ── Deliberately NON-blocking, and deliberately its own job ──────────────
+    # `npm run lint` currently reports ~3 errors and ~7 warnings, and every one
+    # of them is in VENDORED code: shadcn/ui components (`no-empty-object-type`
+    # in command.tsx / textarea.tsx) and `tailwind.config.ts`
+    # (`no-require-imports`). Those files are generated and come back on the
+    # next `shadcn add`.
+    #
+    # Blocking on them would mean a gate that is red from day one for reasons
+    # nobody caused — and a gate nobody can satisfy is a gate everybody learns
+    # to bypass. Keeping it separate and advisory means the `build` job's
+    # red/green stays meaningful while the lint debt stays visible.
+    #
+    # It reports into the run summary and always exits 0, rather than using
+    # `continue-on-error` — that still paints a red ✗ on every PR, and a check
+    # that is permanently red is one people stop reading.
+    #
+    # Make this blocking once the vendored findings are excluded via eslint
+    # config (preferred) or fixed: drop the `|| true` and the summary wrapper.
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: Lint (report only)
+        run: |
+          echo '## ESLint (advisory — does not block)' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          # 2>&1 BEFORE the pipe: eslint writes findings to stdout but the
+          # crash traces that matter to stderr. tee keeps both in the log too.
+          npm run lint --if-present 2>&1 | tee -a "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Fails on high or critical only. Moderates are reported but do not block:
+      # several remaining moderates here are fixable only via `npm audit fix
+      # --force`, i.e. a breaking downgrade, and a gate nobody can satisfy is a
+      # gate everybody learns to ignore. Raise this to `moderate` once those
+      # are resolved.
+      - name: Audit (fails on high/critical)
+        run: npm audit --audit-level=high
